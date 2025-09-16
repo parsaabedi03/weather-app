@@ -1,15 +1,42 @@
-import { getWeatherByGeolocation } from "./utils/httpReq.js";
+import showCard from "./card.js";
+import getForcastDays from "./forecastDays.js";
+import getData from "./forecastHours.js";
+import {
+  getWeatherByCityName,
+  getWeatherByGeolocation,
+} from "./utils/httpReq.js";
 
 const locationBtn = document.getElementById("locationBtn");
 const cityName = document.getElementById("cityName");
 const currentWeatherCard = document.getElementById("currentWeatherCard");
 
+const cityInput = document.getElementById("cityInput");
+const cityBtn = document.getElementById("cityBtn");
+
 async function getLocation() {
   try {
+    showSkeleton();
+    cityName.innerHTML = `<div class="bg-gray-300 h-10 w-30 animate-pulse rounded-lg"></div>`;
     const result = await getWeatherByGeolocation();
     cityName.textContent = result.name;
-    console.log(result);
-    showWeatherCard(result);
+
+    const data = {
+      condition: result.weather[0].main,
+      date: result.dt,
+      description: result.weather[0].description,
+      humidity: result.main.humidity,
+      main: result.main.temp,
+      feels_like: result.main.feels_like,
+      wind: result.wind.speed,
+    };
+
+    getData(result.name, 8);
+    getForcastDays(result.name, 40);
+    currentWeatherCard.innerHTML = `
+      <div class="text-center w-56 sm:w-72">
+        ${showCard(data)}
+      </div>`;
+    lucide.createIcons();
   } catch (err) {
     console.error("Error:", err);
   }
@@ -34,127 +61,46 @@ const showSkeleton = () => {
   currentWeatherCard.innerHTML = html;
 };
 
-const showWeatherCard = (data) => {
-  const { main, dt, weather, sys, wind } = data;
-
-  
-  const date = new Date(dt * 1000);
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-  
-  const { title, subtitle } = textColorCard(hours);
-
-  const html = `
-  <div class="${bgColorCard(
-    weather[0].main,
-    hours
-  )} p-4 sm:p-6 text-center w-56 sm:w-72 rounded-lg">
-    <p class="text-base sm:text-lg font-semibold ${title}">
-      ${hours}:${minutes}
-    </p>
-    ${weatherIcon(weather)}
-    <p class="text-2xl sm:text-3xl font-bold ${title} mt-2">
-      ${Math.round(main.temp)}°C
-    </p>
-    <p class="text-sm sm:text-base ${subtitle}">
-      ${weather[0].description}
-    </p>
-    <p class="text-xs sm:text-sm ${subtitle} mt-2">
-      Humidity: ${main.humidity}%
-    </p>
-    <div class="h-1 bg-gray-200 rounded-full mt-1">
-      <div class="h-full bg-teal-500 rounded-full transition-all" style="width: ${
-        main.humidity
-      }%"></div>
-    </div>
-    <p class="text-xs sm:text-sm ${subtitle} mt-2">
-      Wind: ${wind.speed} km/h
-    </p>
-    <p class="text-xs sm:text-sm ${subtitle} mt-2">
-      Feels like: ${Math.round(main.feels_like)}°C
-    </p>
-  </div>
-`;
-
-  currentWeatherCard.innerHTML = html;
-  lucide.createIcons();
-};
-
-const bgColorCard = (condition, hours) => {
-  const isNight = hours >= 18 || hours < 6;
-
-  switch (condition) {
-    case "Clear":
-      return isNight
-        ? "bg-gradient-to-b from-gray-800 to-gray-900"
-        : "bg-gradient-to-b from-yellow-200 to-orange-300";
-
-    case "Clouds":
-      return isNight
-        ? "bg-gradient-to-b from-gray-700 to-gray-900"
-        : "bg-gradient-to-b from-gray-200 to-gray-400";
-
-    case "Atmosphere":
-      return isNight
-        ? "bg-gradient-to-b from-gray-600 to-gray-800"
-        : "bg-gradient-to-b from-gray-300 to-blue-100";
-
-    case "Snow":
-      return isNight
-        ? "bg-gradient-to-b from-blue-200 to-blue-500"
-        : "bg-gradient-to-b from-blue-100 to-white";
-
-    case "Rain":
-      return isNight
-        ? "bg-gradient-to-b from-blue-700 to-gray-800"
-        : "bg-gradient-to-b from-blue-400 to-blue-700";
-
-    case "Drizzle":
-      return isNight
-        ? "bg-gradient-to-b from-teal-500 to-blue-700"
-        : "bg-gradient-to-b from-teal-200 to-blue-300";
-
-    case "Thunderstorm":
-      return isNight
-        ? "bg-gradient-to-b from-gray-800 to-purple-900"
-        : "bg-gradient-to-b from-gray-600 to-purple-800";
-
-    default:
-      return isNight
-        ? "bg-gradient-to-b from-gray-700 to-gray-900"
-        : "bg-gradient-to-b from-gray-200 to-blue-200";
+const clickHanler = async () => {
+  const value = cityInput.value.toLowerCase().trim();
+  if (!value) {
+    console.log("please fill the input");
+    return;
   }
-};
 
-const weatherIcon = (weather) => {
-  const { main } = weather[0];
-  switch (main) {
-    case "Clear":
-      return `<i data-lucide="sun" class="block w-10 h-10 mx-auto text-yellow-500"></i>`;
-    case "Clouds":
-      return `<i data-lucide="cloudy" class="w-10 h-10 mx-auto text-gray-500"></i>`;
-    case "Atmosphere":
-      return `<i data-lucide="waves" class="w-10 h-10 mx-auto text-blue-400"></i>`;
-    case "Snow":
-      return `<i data-lucide="snowflake" class="w-10 h-10 mx-auto text-blue-300"></i>`;
-    case "Rain":
-      return `<i data-lucide="cloud-rain" class="w-10 h-10 mx-auto text-blue-600"></i>`;
-    case "Drizzle":
-      return `<i data-lucide="cloud-drizzle" class="w-10 h-10 mx-auto text-teal-400"></i>`;
-    case "Thunderstorm":
-      return `<i data-lucide="cloud-lightning" class="w-10 h-10 mx-auto text-yellow-600"></i>`;
+  cityInput.value = "";
+
+  try {
+    showSkeleton();
+    cityName.innerHTML = `<div class="bg-gray-300 h-10 w-30 animate-pulse rounded-lg"></div>`;
+    const result = await getWeatherByCityName(value);
+    cityName.textContent = result.name;
+
+    const formatData = {
+      condition: result.weather[0].main,
+      date: result.dt,
+      description: result.weather[0].description,
+      humidity: result.main.humidity,
+      main: result.main.temp,
+      feels_like: result.main.feels_like,
+      wind: result.wind.speed,
+    };
+
+    getData(result.name, 8);
+    getForcastDays(result.name, 40);
+
+    currentWeatherCard.innerHTML = `
+      <div class="text-center w-56 sm:w-72">
+        ${showCard(formatData)}
+      </div>`;
+    lucide.createIcons();
+  } catch (err) {
+    console.error("Error:", err);
   }
-};
-
-const textColorCard = (hours) => {
-  const isNight = 20 >= 18 || hours < 6;
-  return {
-    title: isNight ? "text-white" : "text-gray-800", // ساعت یا دما
-    subtitle: isNight ? "text-gray-50" : "text-gray-600", // توضیحات
-  };
 };
 
 document.addEventListener("DOMContentLoaded", () => {
   getLocation();
   locationBtn.addEventListener("click", getLocation);
+  cityBtn.addEventListener("click", clickHanler);
 });

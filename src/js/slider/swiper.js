@@ -1,20 +1,18 @@
 const hourlySwiper = new Swiper(".hourly-swiper", {
-  slidesPerView: 2.5,
-  spaceBetween: 8,
-  slidesOffsetBefore: 10,
-  slidesOffsetAfter: 10,
+  slidesPerView: 2,
+  spaceBetween: 20,
   breakpoints: {
     640: {
-      slidesPerView: 4,
+      slidesPerView: 3,
       spaceBetween: 12,
     },
     768: {
-      slidesPerView: 5,
-      spaceBetween: 16,
+      slidesPerView: 3,
+      spaceBetween: 5,
     },
     1024: {
-      slidesPerView: 6,
-      spaceBetween: 20,
+      slidesPerView: 4,
+      spaceBetween: 5,
     },
   },
 });

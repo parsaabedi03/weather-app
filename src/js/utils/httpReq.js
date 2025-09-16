@@ -2,9 +2,9 @@ const BASE_URL = "https://api.openweathermap.org";
 const API_KEY = "5f0fe6f805b0885e2996d24f2ad52ad5";
 const UNITS = "metric";
 
-const getWeatherByCityName = async () => {
+const getWeatherByCityName = async (name) => {
   const data = await fetch(
-    `${BASE_URL}/data/2.5/weather?q=tehran&appid=${API_KEY}&units=${UNITS}`
+    `${BASE_URL}/data/2.5/weather?q=${name}&appid=${API_KEY}&units=${UNITS}`
   );
   const json = await data.json();
   return json;
@@ -34,9 +34,9 @@ const getWeatherByGeolocation = () => {
   });
 };
 
-const getForcastByName = async () => {
+const getForcastByName = async (name,cnt) => {
   const data = await fetch(
-    `${BASE_URL}/data/2.5/forecast?q=tehran&cnt=5&appid=${API_KEY}&units=${UNITS}`
+    `${BASE_URL}/data/2.5/forecast?q=${name}&cnt=${cnt}&appid=${API_KEY}&units=${UNITS}`
   );
   const json = await data.json();
   return json;

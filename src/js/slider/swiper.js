@@ -1,5 +1,5 @@
 const hourlySwiper = new Swiper(".hourly-swiper", {
-  slidesPerView: 2,
+  slidesPerView: 1.5,
   spaceBetween: 20,
   breakpoints: {
     640: {

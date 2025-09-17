@@ -33,7 +33,7 @@ async function getLocation() {
     getData(result.name, 8);
     getForcastDays(result.name, 40);
     currentWeatherCard.innerHTML = `
-      <div class="text-center w-56 sm:w-72">
+      <div class="text-center w-72">
         ${showCard(data)}
       </div>`;
     lucide.createIcons();
@@ -44,7 +44,7 @@ async function getLocation() {
 
 const showSkeleton = () => {
   const html = `
-    <div class="bg-gray-200 p-4 sm:p-6 text-center w-56 sm:w-72 rounded-lg animate-pulse">
+    <div class="bg-gray-200 p-4 sm:p-6 text-center w-72 rounded-lg animate-pulse">
       <div class="h-5 w-24 bg-gray-300 rounded mx-auto mb-2"></div>
       <div class="h-12 w-12 sm:h-16 sm:w-16 bg-gray-300 rounded-full mx-auto mb-2"></div>
       <div class="h-8 w-32 sm:w-40 bg-gray-300 rounded mx-auto mb-1"></div> 
@@ -90,7 +90,7 @@ const clickHanler = async () => {
     getForcastDays(result.name, 40);
 
     currentWeatherCard.innerHTML = `
-      <div class="text-center w-56 sm:w-72">
+      <div class="text-center w-72">
         ${showCard(formatData)}
       </div>`;
     lucide.createIcons();

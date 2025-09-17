@@ -11,7 +11,6 @@ const showCard = (data) => {
     wind,
   } = data;
 
-  console.log(condition)
 
   const newDate = new Date(date * 1000);
   const hours = newDate.getHours().toString().padStart(2, "0");

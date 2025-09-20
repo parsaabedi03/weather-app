@@ -69,16 +69,13 @@ A short description: what this project does, why it was built, and what problem 
 
 ```
 .
-├── src/
-│   ├── forecastHours.js       # Logic for fetching forecast data and building cards
-│   ├── card.js                # showCard function to generate card HTML
-│   ├── utils/
-│   │   └── httpReq.js         # HTTP request utilities for weather API
-│   ├── styles/                # CSS / Tailwind files
-│   └── icons/                 # Lucide or other icon configs
-├── public/                    # Static assets
+weather-app/
+├── .gitignore
+├── README.md
+├── index.html
+├── package-lock.json
 ├── package.json
-└── README.md
+└── src/
 ```
 
 ---

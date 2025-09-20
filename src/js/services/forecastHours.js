@@ -1,13 +1,12 @@
 import showCard from "../components/card.js";
 import showSkeleton from "../components/skeletonCard.js";
-import { getForcastByName } from "./httpReq.js";
 
 const hourlySwiperSlider = document.querySelector(
   ".hourly-swiper .swiper-wrapper"
 );
 
-function renderSkeletonSlides(count = 8) {
-  return Array.from({ length: count })
+const renderSkeletonSlides = (count = 8) =>
+  Array.from({ length: count })
     .map(
       () => `
       <div class="swiper-slide">
@@ -16,21 +15,18 @@ function renderSkeletonSlides(count = 8) {
     `
     )
     .join("");
-}
 
-function formatForecastData(item) {
-  return {
-    condition: item.weather[0].main,
-    date: item.dt,
-    description: item.weather[0].description,
-    humidity: item.main.humidity,
-    main: item.main.temp,
-    wind: item.wind.speed,
-  };
-}
+const formatForecastData = (item) => ({
+  condition: item.weather[0].main,
+  date: item.dt,
+  description: item.weather[0].description,
+  humidity: item.main.humidity,
+  main: item.main.temp,
+  wind: item.wind.speed,
+});
 
-function renderForecastSlides(dataList) {
-  return dataList
+const renderForecastSlides = (dataList) =>
+  dataList
     .map(
       (item) => `
       <div class="swiper-slide text-center">
@@ -39,20 +35,19 @@ function renderForecastSlides(dataList) {
     `
     )
     .join("");
-}
 
-async function renderForecastHours(cityName, count) {
-  hourlySwiperSlider.innerHTML = renderSkeletonSlides();
+const renderForecastHours = (data) => {
+  if (!data) return;
 
-  try {
-    const data = await getForcastByName(cityName, count);
+  hourlySwiperSlider.innerHTML = renderSkeletonSlides(8);
 
-    hourlySwiperSlider.innerHTML = renderForecastSlides(data.list);
+  setTimeout(() => {
+    const filterData = data.list.slice(0, 8);
+
+    hourlySwiperSlider.innerHTML = renderForecastSlides(filterData);
 
     lucide.createIcons();
-  } catch (err) {
-    console.error("Error fetching forecast:", err);
-  }
-}
+  }, 300);
+};
 
 export default renderForecastHours;

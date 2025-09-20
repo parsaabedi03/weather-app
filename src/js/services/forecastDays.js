@@ -1,13 +1,12 @@
 import showCard from "../components/card.js";
 import showSkeleton from "../components/skeletonCard.js";
-import { getForcastByName } from "./httpReq.js";
 
 const dailySwiperSlider = document.querySelector(
   ".daily-swiper .swiper-wrapper"
 );
 
-function renderDailySkeletonSlides(count = 5) {
-  return Array.from({ length: count })
+const renderDailySkeletonSlides = (count = 5) =>
+  Array.from({ length: count })
     .map(
       () => `
     <div class="swiper-slide !w-fit !h-fit flex items-center justify-center">
@@ -16,9 +15,8 @@ function renderDailySkeletonSlides(count = 5) {
     `
     )
     .join("");
-}
 
-function processFiveDayForecast(forecastData) {
+const processFiveDayForecast = (forecastData) => {
   const daily = {};
 
   forecastData.list.forEach((item) => {
@@ -56,10 +54,10 @@ function processFiveDayForecast(forecastData) {
       wind: mostFrequent(daily[date].windSpeeds),
     };
   });
-}
+};
 
-function renderDailySlides(data) {
-  return data
+const renderDailySlides = (data) =>
+  data
     .map(
       (day) => `
       <div class="swiper-slide !w-3xs text-center">
@@ -68,30 +66,30 @@ function renderDailySlides(data) {
     `
     )
     .join("");
-}
 
-function mostFrequent(arr) {
+const mostFrequent = (arr) => {
   const counts = arr.reduce((acc, val) => {
     acc[val] = (acc[val] || 0) + 1;
     return acc;
   }, {});
 
-  return Object.keys(counts).reduce((a, b) => (counts[a] > counts[b] ? a : b));
-}
+  return Object.keys(counts).reduce((a, b) =>
+    counts[a] > counts[b] ? a : b
+  );
+};
 
-async function getForecastDays(cityName, count) {
-  dailySwiperSlider.innerHTML = renderDailySkeletonSlides();
+const getForecastDays = (data) => {
+  if (!data) return;
 
-  try {
-    const data = await getForcastByName(cityName, count);
+  dailySwiperSlider.innerHTML = renderDailySkeletonSlides(5);
+
+  setTimeout(() => {
     const forecast = processFiveDayForecast(data);
 
     dailySwiperSlider.innerHTML = renderDailySlides(forecast);
 
     lucide.createIcons();
-  } catch (err) {
-    console.error("Error fetching daily forecast:", err);
-  }
-}
+  }, 300);
+};
 
 export default getForecastDays;

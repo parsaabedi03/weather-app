@@ -1,49 +1,41 @@
-const BASE_URL = "https://api.openweathermap.org";
+import { showModal } from "../components/modal.js";
+
+const BASE_URL = "https://api.openweathermap.org/data/2.5";
 const API_KEY = "5f0fe6f805b0885e2996d24f2ad52ad5";
 const UNITS = "metric";
 
-const getWeatherByCityName = async (name) => {
-  const data = await fetch(
-    `${BASE_URL}/data/2.5/weather?q=${name}&appid=${API_KEY}&units=${UNITS}`
-  );
-  const json = await data.json();
-  return json;
-};
+const getWeatherData = async (type, data) => {
+  let url = "";
 
-const getWeatherByGeolocation = () => {
-  return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          try {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+  switch (type) {
+    case "current":
+      typeof data === "string"
+        ? (url = `${BASE_URL}/weather?q=${data}&appid=${API_KEY}&units=${UNITS}`)
+        : (url = `${BASE_URL}/weather?lat=${data.latitude}&lon=${data.longitude}&appid=${API_KEY}&units=${UNITS}`);
+      break;
 
-            const fetchData = await fetch(
-              `${BASE_URL}/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=${UNITS}`
-            );
-            const json = await fetchData.json();
-            resolve(json);
-          } catch (err) {
-            reject(err);
-          }
-        },
-        (error) => {
-          reject(error);
-        }
-      );
-    }else{
-      console.log("your browser does not support geolocation")
+    case "forecast":
+      typeof data === "string"
+        ? (url = `${BASE_URL}/forecast?q=${data}&appid=${API_KEY}&units=${UNITS}`)
+        : (url = `${BASE_URL}/forecast?lat=${data.latitude}&lon=${data.longitude}&appid=${API_KEY}&units=${UNITS}`);
+      break;
+    default:
+      url =
+        url = `${BASE_URL}/weather?q=$karaj&appid=${API_KEY}&units=${UNITS}`;
+      break;
+  }
+
+  try {
+    const response = await fetch(url);
+    const json = await response.json();
+    if (+json.cod === 200) {
+      return json;
+    } else {
+      showModal(json.message, "The name of the city is wrong.");
     }
-  });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const getForcastByName = async (name, cnt) => {
-  const data = await fetch(
-    `${BASE_URL}/data/2.5/forecast?q=${name}&cnt=${cnt}&appid=${API_KEY}&units=${UNITS}`
-  );
-  const json = await data.json();
-  return json;
-};
-
-export { getWeatherByCityName, getWeatherByGeolocation, getForcastByName };
+export default getWeatherData;

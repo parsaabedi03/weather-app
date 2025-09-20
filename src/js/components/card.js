@@ -1,4 +1,6 @@
 const showCard = (data) => {
+  if (!data) return;
+  
   const {
     condition,
     date,
@@ -10,7 +12,6 @@ const showCard = (data) => {
     feels_like,
     wind,
   } = data;
-
 
   const newDate = new Date(date * 1000);
   const hours = newDate.getHours().toString().padStart(2, "0");
@@ -169,7 +170,11 @@ const weatherIcon = (condition, hour) => {
       }"></i>`;
     case "Dust":
       return `<i data-lucide="cloud-fog" class="w-10 h-10 mx-auto ${
-        isNight ? "text-teal-200" : "text-teal-400"
+        isNight ? "text-yellow-200" : "text-amber-400"
+      }"></i>`;
+    case "Haze":
+      return `<i data-lucide="haze" class="w-10 h-10 mx-auto ${
+        isNight ? "text-gray-300" : "text-gray-400"
       }"></i>`;
   }
 };
@@ -177,7 +182,7 @@ const weatherIcon = (condition, hour) => {
 const textColorCard = (condition, hours) => {
   const isNight = hours >= 18 || hours < 6;
   const isBadWeather = condition == "Rain" || condition == "Clouds";
-  
+
   return {
     title: isNight || isBadWeather ? "text-white" : "text-gray-800",
     subtitle: isNight || isBadWeather ? "text-gray-50" : "text-gray-600",
